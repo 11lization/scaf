@@ -122,6 +122,9 @@ contract Storage {
         uint256 r
     ) external view returns (Point memory) {
         Point[] memory tree = constructTree(leafNodes);
+        r =
+            uint256(keccak256(abi.encodePacked(r))) %
+            21888242871839275222246405745257275088548364400416034343698204186575808495617;
         Point memory result = calculateEvenIndexedNodesSum(leafNodes, r);
 
         uint256 currentScalar = r;
@@ -135,7 +138,7 @@ contract Storage {
             currentScalar = mulmod(
                 currentScalar,
                 currentScalar,
-                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F
+                21888242871839275222246405745257275088548364400416034343698204186575808495617
             );
             Point memory layerSum = calculateEvenIndexedNodesSum(
                 layerNodes,

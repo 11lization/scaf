@@ -1,7 +1,7 @@
 const Web3 = require("web3");
 
 const besuRpcUrl = "http://127.0.0.1:8545";
-const contractAddress = "0x3484B20600854091C166C062FacAd700123f5f71";
+const contractAddress = "0x7cA5543f9B2C35F0E972f1B45b61A2FE53fF1ed9";
 const contractABI = [
   {
     inputs: [
@@ -359,34 +359,94 @@ async function main() {
       64
     ),
   };
+  const p5 = {
+    x: web3.utils.padLeft(
+      web3.utils.toHex(
+        "11960583679663384366480174444786576796647662727306252418698415822917902887957"
+      ),
+      64
+    ), // 32 바이트 (64 자리)로 패딩합니다.
+    y: web3.utils.padLeft(
+      web3.utils.toHex(
+        "1593966172791376403029241248399967522928053988295567913586599498591215462419"
+      ),
+      64
+    ),
+  };
+  const p6 = {
+    x: web3.utils.padLeft(
+      web3.utils.toHex(
+        "7031959683282870454445370092176192631598316284287623002054656345261072872727"
+      ),
+      64
+    ), // 32 바이트 (64 자리)로 패딩합니다.
+    y: web3.utils.padLeft(
+      web3.utils.toHex(
+        "18423985884519550055697364840216683506349686267643106190879448227028663401432"
+      ),
+      64
+    ),
+  };
+  const p7 = {
+    x: web3.utils.padLeft(
+      web3.utils.toHex(
+        "17674185364569177181375940725669906313009758579974743260674333421480005882241"
+      ),
+      64
+    ), // 32 바이트 (64 자리)로 패딩합니다.
+    y: web3.utils.padLeft(
+      web3.utils.toHex(
+        "4923760616500646932038002714506217333997708620124856180221247995027548756469"
+      ),
+      64
+    ),
+  };
+  const p8 = {
+    x: web3.utils.padLeft(
+      web3.utils.toHex(
+        "8471613928896151609652432363624550995386439049968070023269517492214345041611"
+      ),
+      64
+    ), // 32 바이트 (64 자리)로 패딩합니다.
+    y: web3.utils.padLeft(
+      web3.utils.toHex(
+        "1848985045720736528399882104942898037371206761071446572926676238293944645370"
+      ),
+      64
+    ),
+  };
   const r = BigInt("1234567890123456789012345678901234567890");
   const r_hex = web3.utils.toHex(r.toString());
 
-  // const data = contract.methods.addPoints(p1, p2).encodeABI();
+  const data = contract.methods.addPoints(p1, p2).encodeABI();
 
-  // const transaction = {
-  //   to: contractAddress,
-  //   data: data,
-  //   gas: 2000000000000000,
-  //   from: fromAddress,
-  // };
+  // const data = contract.methods
+  //   .layerWiseMultiplication([p1, p2, p3, p4, p5, p6, p7, p8], r_hex)
+  //   .encodeABI();
 
-  // const signedTx = await web3.eth.accounts.signTransaction(
-  //   transaction,
-  //   privateKey
-  // );
+  const transaction = {
+    to: contractAddress,
+    data: data,
+    gas: 2000000000000000,
+    from: fromAddress,
+  };
 
-  // await web3.eth
-  //   .sendSignedTransaction(signedTx.rawTransaction)
-  //   .on("receipt", (receipt) => {
-  //     console.log("트랜잭션 성공", receipt);
-  //   })
-  //   .on("error", (error) => {
-  //     console.log("트랜잭션 실패", error);
-  //   });
+  const signedTx = await web3.eth.accounts.signTransaction(
+    transaction,
+    privateKey
+  );
+
+  await web3.eth
+    .sendSignedTransaction(signedTx.rawTransaction)
+    .on("receipt", (receipt) => {
+      console.log("트랜잭션 성공", receipt);
+    })
+    .on("error", (error) => {
+      console.log("트랜잭션 실패", error);
+    });
 
   const result = await contract.methods
-    .layerWiseMultiplication([p1, p2, p3, p4], r_hex)
+    .layerWiseMultiplication([p1, p2, p3, p4, p5, p6, p7, p8], r_hex)
     .call({ from: fromAddress });
 
   console.log("곱셈 결과:", result);
